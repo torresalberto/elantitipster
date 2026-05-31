@@ -160,6 +160,23 @@ const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
 },{threshold:.2});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Auto-advance panels every 6 seconds
+const panels=document.querySelectorAll('.panel');
+let current=0;
+function advance(){
+  current=(current+1)%panels.length;
+  panels[current].scrollIntoView({behavior:'smooth'});
+}
+let timer=setInterval(advance,6000);
+// Pause auto on user scroll, resume after 10s idle
+let idle;
+window.addEventListener('scroll',()=>{
+  clearInterval(timer);clearTimeout(idle);
+  // figure out which panel is visible
+  panels.forEach((p,i)=>{if(p.getBoundingClientRect().top<innerHeight/2&&p.getBoundingClientRect().bottom>innerHeight/2)current=i});
+  idle=setTimeout(()=>{timer=setInterval(advance,6000)},10000);
+},{passive:true});
 </script>
 </body>
 </html>
