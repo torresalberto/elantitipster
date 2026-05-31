@@ -3,207 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>El Anti-Tipster — Pronósticos Liga MX honestos y verificables</title>
-<meta name="description" content="El único servicio de predicciones de Liga MX que te dice cuándo NO apostar. Récord público, IA verificable, sin hype.">
-<meta name="theme-color" content="#0a0a0f">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<title>El Anti-Tipster — Pronósticos Liga MX</title>
+<meta name="description" content="El único servicio de predicciones de Liga MX que te dice cuándo NO apostar. Récord público, IA verificable.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050508;--ink:#f0f0f5;--muted:#7a7a8c;--gold:#f5a623;--gold2:#ffd700;--border:rgba(255,255,255,.06)}
+:root{--bg:#050508;--ink:#f0f0f5;--muted:#888;--gold:#f5a623;--gold2:#ffd700}
 *{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden}
 
-/* Particle canvas */
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* Each panel = full viewport, snaps */
+.panel{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 1.5rem;position:relative;scroll-snap-align:start;overflow:hidden}
 
-/* Cinematic vignette */
-.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.7))}
+/* Parallax layers inside panels */
+.panel .bg-layer{position:absolute;inset:0;pointer-events:none;will-change:transform}
+.panel .bg-layer.slow{animation:drift 20s ease-in-out infinite alternate}
+.panel .bg-layer.med{animation:drift 14s ease-in-out infinite alternate-reverse}
+@keyframes drift{0%{transform:translateY(0) scale(1)}100%{transform:translateY(-30px) scale(1.03)}}
 
-/* Animated aurora */
-.aurora{position:fixed;top:-40%;left:-20%;width:140%;height:100%;z-index:0;pointer-events:none;opacity:.5;
-  background:conic-gradient(from 180deg at 50% 50%,rgba(245,166,35,.15),rgba(99,102,241,.1),rgba(245,166,35,.05),transparent);
-  animation:spin 25s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* Floating orbs (auto-animated, no mouse needed) */
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.25;will-change:transform}
+.orb1{width:400px;height:400px;background:var(--gold);top:-10%;left:-10%;animation:float1 12s ease-in-out infinite}
+.orb2{width:300px;height:300px;background:#6366f1;bottom:-15%;right:-10%;animation:float2 15s ease-in-out infinite}
+.orb3{width:250px;height:250px;background:var(--gold2);top:50%;left:60%;animation:float3 18s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)}}
+@keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,25px)}}
 
-.page{position:relative;z-index:2;max-width:800px;margin:0 auto;padding:0 1.5rem}
-
-/* Hero */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.8rem}
-.hero-badge{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:999px;padding:.4rem 1.2rem;font-size:.78rem;color:var(--gold);letter-spacing:1px;text-transform:uppercase;animation:pulse 3s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-
-.hero h1{font-size:clamp(3rem,10vw,5.5rem);font-weight:900;line-height:.95;letter-spacing:-.04em}
-.hero h1 .highlight{background:linear-gradient(135deg,var(--gold),var(--gold2),#fff,var(--gold));background-size:300% 300%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:shimmer 4s ease-in-out infinite}
+/* Content inside panels */
+.content{position:relative;z-index:2;max-width:700px}
+.content h1{font-size:clamp(3rem,10vw,6rem);font-weight:900;line-height:.9;letter-spacing:-.04em;margin-bottom:1rem}
+.content h2{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;line-height:1;margin-bottom:1rem}
+.content .highlight{background:linear-gradient(135deg,var(--gold),var(--gold2),#fff,var(--gold));background-size:300%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s ease-in-out infinite}
 @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.content p{font-size:clamp(1.1rem,3vw,1.4rem);color:var(--muted);line-height:1.6;max-width:30ch;margin:0 auto}
+.content p strong{color:var(--ink)}
 
-.hero .sub{font-size:clamp(1.1rem,3vw,1.5rem);color:var(--muted);max-width:32ch;line-height:1.6}
-.hero .sub strong{color:var(--ink)}
+/* Fade-in on scroll */
+.reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:none}
 
-/* CTAs with glow */
-.ctas{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:.5rem}
-.btn{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2.4rem;border-radius:14px;font-size:1.05rem;font-weight:700;text-decoration:none;transition:all .25s;position:relative}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#e8930c);color:#000;
-  box-shadow:0 0 30px rgba(245,166,35,.3),0 0 60px rgba(245,166,35,.1)}
-.btn-gold:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 50px rgba(245,166,35,.5),0 0 100px rgba(245,166,35,.2)}
-.btn-ghost{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);color:var(--ink);border:1px solid var(--border)}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 20px rgba(245,166,35,.1)}
+/* Fixed CTA — always visible, pulses brighter */
+.fixed-cta{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:100;
+  display:flex;gap:.8rem;padding:.6rem;background:rgba(5,5,8,.85);backdrop-filter:blur(16px);
+  border:1px solid rgba(245,166,35,.2);border-radius:999px}
+.fixed-cta .btn{padding:.75rem 1.8rem;border-radius:999px;font-size:.95rem;font-weight:700;text-decoration:none;transition:all .3s}
+.fixed-cta .btn-gold{background:linear-gradient(135deg,var(--gold),#e8930c);color:#000;
+  animation:glow-pulse 2.5s ease-in-out infinite}
+.fixed-cta .btn-ghost{color:var(--ink);border:1px solid rgba(255,255,255,.15)}
+.fixed-cta .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 20px rgba(245,166,35,.3)}50%{box-shadow:0 0 40px rgba(245,166,35,.6),0 0 80px rgba(245,166,35,.2)}}
 
-/* Scroll indicator */
-.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bob 2s ease-in-out infinite;color:var(--muted);font-size:1.5rem}
-@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+/* Panel-specific */
+.panel-dark{background:var(--bg)}
+.panel-subtle{background:linear-gradient(180deg,rgba(245,166,35,.03),var(--bg))}
 
-/* Features */
-.section{padding:6rem 0}
-.section-title{font-size:2rem;font-weight:800;text-align:center;margin-bottom:3rem}
-.section-title span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* Feature pills */
+.pills{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:2rem}
+.pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  border-radius:14px;padding:1rem 1.4rem;font-size:.92rem;display:flex;align-items:center;gap:.6rem;
+  transition:all .3s}
+.pill:hover{border-color:rgba(245,166,35,.3);transform:translateY(-2px)}
+.pill-icon{font-size:1.5rem}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
-.card{background:rgba(255,255,255,.02);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:18px;padding:2rem;transition:all .35s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(245,166,35,.06),transparent 60%);opacity:0;transition:opacity .4s}
-.card:hover::before{opacity:1}
-.card:hover{border-color:rgba(245,166,35,.25);transform:translateY(-4px)}
-.card-icon{font-size:2.5rem;margin-bottom:1rem}
-.card h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
-.card p{font-size:.9rem;color:var(--muted);line-height:1.7}
+/* Big number */
+.big-num{font-size:clamp(4rem,12vw,8rem);font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
 
-/* Stats */
-.stats{display:flex;flex-wrap:wrap;gap:3rem;justify-content:center;padding:4rem 0}
-.stat{text-align:center}
-.stat .num{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat .label{font-size:.78rem;color:var(--muted);margin-top:.4rem;text-transform:uppercase;letter-spacing:1px}
-
-/* Final CTA */
-.final{text-align:center;padding:6rem 0 8rem}
-.final h2{font-size:2.2rem;font-weight:800;margin-bottom:1rem}
-.final p{color:var(--muted);font-size:1.15rem;margin-bottom:2.5rem;max-width:34ch;margin-left:auto;margin-right:auto;line-height:1.6}
-
-/* Footer */
-footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border)}
+footer{position:relative;z-index:2;text-align:center;padding:2rem;color:var(--muted);font-size:.75rem}
 footer a{color:var(--gold);text-decoration:none}
-.socials{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem;font-size:1.6rem}
-.socials a{color:var(--muted);text-decoration:none;transition:all .3s}
-.socials a:hover{color:var(--gold);transform:scale(1.2)}
 
 @media(max-width:600px){
-  .hero{min-height:90vh}
-  .ctas{flex-direction:column;align-items:stretch}
-  .btn{justify-content:center}
-  .stats{gap:2rem}
+  .fixed-cta{width:92%;gap:.5rem;padding:.5rem}
+  .fixed-cta .btn{flex:1;text-align:center;padding:.7rem .8rem;font-size:.85rem}
+  .pills{flex-direction:column;align-items:center}
 }
 </style>
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"El Anti-Tipster","description":"Pronósticos de Liga MX con IA. Récord público verificable.","url":"https://elantitipster.com","sameAs":["https://t.me/elantitipster","https://tiktok.com/@elantitipster","https://x.com/elantitipster"]}
-</script>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
-<div class="aurora"></div>
-<div class="vignette"></div>
-
-<div class="page">
-  <section class="hero">
-    <div class="hero-badge">⚽ Liga MX · Apertura 2026</div>
-    <h1>El <span class="highlight">Anti-Tipster</span></h1>
-    <p class="sub">El único servicio que te dice cuándo <strong>NO</strong> apostar.<br>Récord público. IA real. Cero mentiras.</p>
-    <div class="ctas">
-      <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis</a>
-      <a href="https://www.caliente.mx" class="btn btn-ghost" target="_blank" rel="noopener nofollow">🎰 Caliente</a>
-    </div>
-    <div class="scroll-hint">↓</div>
-  </section>
-
-  <section class="section">
-    <h2 class="section-title">¿Por qué somos <span>diferentes</span>?</h2>
-    <div class="grid">
-      <div class="card"><div class="card-icon">🤖</div><h3>IA, no opinión</h3><p>Machine learning entrenado con miles de partidos. Walk-forward validado.</p></div>
-      <div class="card"><div class="card-icon">🛑</div><h3>Señales de SKIP</h3><p>Te decimos cuándo no apostar. El mejor dinero es el que no pierdes.</p></div>
-      <div class="card"><div class="card-icon">📊</div><h3>Récord público</h3><p>Cada pick con timestamp. Aciertos y fallos. Verificable por ti.</p></div>
-      <div class="card"><div class="card-icon">🎟️</div><h3>Parlays inteligentes</h3><p>Piernas de alta confianza combinadas. Listas para Caliente.</p></div>
-      <div class="card"><div class="card-icon">🚫</div><h3>Cero "100% seguro"</h3><p>Los que prometen eso te mienten. Nosotros no.</p></div>
-      <div class="card"><div class="card-icon">💸</div><h3>Gratis para empezar</h3><p>Únete, verifica nuestro récord, y decide. Sin compromiso.</p></div>
-    </div>
-  </section>
-
-  <div class="stats">
-    <div class="stat"><div class="num">AGO</div><div class="label">Inicia el récord</div></div>
-    <div class="stat"><div class="num">3,200+</div><div class="label">Partidos analizados</div></div>
-    <div class="stat"><div class="num">2</div><div class="label">Cerebros IA</div></div>
-    <div class="stat"><div class="num">$0</div><div class="label">Costo de entrada</div></div>
-  </div>
-
-  <section class="final">
-    <h2>¿Listo para dejar de perder con tipsters falsos?</h2>
-    <p>Únete ahora. Cuando empiece la temporada vas a ver cada pick en vivo — sin editar, sin borrar.</p>
-    <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis en Telegram</a>
-  </section>
-
-  <footer>
-    <div class="socials">
-      <a href="https://t.me/elantitipster" title="Telegram">📲</a>
-      <a href="https://tiktok.com/@elantitipster" title="TikTok">🎵</a>
-      <a href="https://x.com/elantitipster" title="X">𝕏</a>
-    </div>
-    <p>El Anti-Tipster · Liga MX · Apuesta responsable · +18</p>
-    <p style="margin-top:.4rem">Algunos links son de afiliados. <a href="https://t.me/elantitipster">Más info</a></p>
-  </footer>
+<!-- Fixed CTA — always visible, glow intensifies -->
+<div class="fixed-cta">
+  <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis</a>
+  <a href="https://www.caliente.mx" class="btn btn-ghost" target="_blank" rel="noopener nofollow">🎰 Caliente</a>
 </div>
 
+<!-- Panel 1: Hero -->
+<section class="panel panel-dark">
+  <div class="bg-layer slow"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+  <div class="content reveal">
+    <h1>El <span class="highlight">Anti-Tipster</span></h1>
+    <p>Pronósticos de Liga MX que no te mienten.</p>
+  </div>
+</section>
+
+<!-- Panel 2: The problem -->
+<section class="panel panel-subtle">
+  <div class="bg-layer med"><div class="orb orb3"></div></div>
+  <div class="content reveal">
+    <h2>Los tipsters te <span class="highlight">mienten</span></h2>
+    <p>Prometen 90%. Entregan 50%. Borran los fallos. Cobran por aire.</p>
+  </div>
+</section>
+
+<!-- Panel 3: Our answer -->
+<section class="panel panel-dark">
+  <div class="bg-layer slow"><div class="orb orb1" style="left:60%;top:20%"></div><div class="orb orb2" style="right:60%;bottom:20%"></div></div>
+  <div class="content reveal">
+    <h2>Nosotros hacemos lo <span class="highlight">opuesto</span></h2>
+    <p>Te decimos cuándo <strong>NO</strong> apostar. Y publicamos cada resultado — aciertos y fallos.</p>
+  </div>
+</section>
+
+<!-- Panel 4: Features -->
+<section class="panel panel-subtle">
+  <div class="content reveal">
+    <h2>¿Cómo funciona?</h2>
+    <div class="pills">
+      <div class="pill"><span class="pill-icon">🤖</span> IA real, no opinión</div>
+      <div class="pill"><span class="pill-icon">🛑</span> Señales de SKIP</div>
+      <div class="pill"><span class="pill-icon">📊</span> Récord público</div>
+      <div class="pill"><span class="pill-icon">🎟️</span> Parlays para Caliente</div>
+      <div class="pill"><span class="pill-icon">🚫</span> Cero "100% seguro"</div>
+      <div class="pill"><span class="pill-icon">💸</span> Gratis para empezar</div>
+    </div>
+  </div>
+</section>
+
+<!-- Panel 5: Social proof -->
+<section class="panel panel-dark">
+  <div class="bg-layer slow"><div class="orb orb2" style="left:30%;top:10%"></div></div>
+  <div class="content reveal">
+    <div class="big-num">3,200+</div>
+    <p>partidos analizados por nuestro modelo de IA</p>
+  </div>
+</section>
+
+<!-- Panel 6: Final -->
+<section class="panel panel-subtle">
+  <div class="bg-layer med"><div class="orb orb1" style="left:50%;top:30%"></div><div class="orb orb3" style="left:20%;top:60%"></div></div>
+  <div class="content reveal">
+    <h2>La temporada arranca en <span class="highlight">agosto</span></h2>
+    <p>Únete ahora. Cuando empiece, vas a ver cada pick en vivo — sin editar, sin borrar.</p>
+  </div>
+</section>
+
+<footer>
+  <p>El Anti-Tipster · Liga MX · +18 · Apuesta responsable</p>
+  <p style="margin-top:.3rem"><a href="https://t.me/elantitipster">Telegram</a> · <a href="https://tiktok.com/@elantitipster">TikTok</a> · <a href="https://x.com/elantitipster">X</a> · Afiliado de Caliente</p>
+</footer>
+
 <script>
-// Particle system — floating golden orbs with physics
-const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
-let W,H,particles=[];
-function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
-resize();addEventListener('resize',resize);
-
-class P{
-  constructor(){this.reset()}
-  reset(){
-    this.x=Math.random()*W;this.y=Math.random()*H;
-    this.r=Math.random()*2+.5;
-    this.vx=(Math.random()-.5)*.3;
-    this.vy=(Math.random()-.5)*.3-.1;
-    this.alpha=Math.random()*.4+.1;
-    this.life=Math.random()*400+200;this.age=0;
-  }
-  update(){
-    this.x+=this.vx;this.y+=this.vy;
-    this.vy-=0.0003; // slight upward drift
-    this.age++;
-    if(this.age>this.life||this.x<-50||this.x>W+50||this.y<-50||this.y>H+50)this.reset();
-  }
-  draw(){
-    const fade=1-this.age/this.life;
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(245,166,35,${this.alpha*fade})`;
-    ctx.fill();
-    // glow
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.r*3,0,Math.PI*2);
-    ctx.fillStyle=`rgba(245,166,35,${this.alpha*fade*.15})`;
-    ctx.fill();
-  }
-}
-for(let i=0;i<80;i++)particles.push(new P());
-
-function animate(){
-  ctx.clearRect(0,0,W,H);
-  particles.forEach(p=>{p.update();p.draw()});
-  requestAnimationFrame(animate);
-}
-animate();
-
-// Card mouse-follow glow
-document.querySelectorAll('.card').forEach(c=>{
-  c.addEventListener('mousemove',e=>{
-    const r=c.getBoundingClientRect();
-    c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
-    c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
-  });
-});
+// Reveal on scroll (IntersectionObserver)
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
+},{threshold:.2});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>
