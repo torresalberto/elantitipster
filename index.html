@@ -6,73 +6,91 @@
 <title>El Anti-Tipster — Pronósticos Liga MX honestos y verificables</title>
 <meta name="description" content="El único servicio de predicciones de Liga MX que te dice cuándo NO apostar. Récord público, IA verificable, sin hype.">
 <meta name="theme-color" content="#0a0a0f">
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0f;--surface:rgba(255,255,255,.04);--ink:#f0f0f5;--muted:#7a7a8c;--gold:#f5a623;--gold2:#ffd700;--accent-glow:rgba(245,166,35,.12);--border:rgba(255,255,255,.08);--radius:16px}
+:root{--bg:#050508;--ink:#f0f0f5;--muted:#7a7a8c;--gold:#f5a623;--gold2:#ffd700;--border:rgba(255,255,255,.06)}
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden}
 
-/* Animated gradient bg */
-.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(245,166,35,.08),transparent),
-             radial-gradient(ellipse 60% 50% at 80% 100%,rgba(99,102,241,.06),transparent)}
+/* Particle canvas */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
 
-.page{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:0 1.5rem}
+/* Cinematic vignette */
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.7))}
+
+/* Animated aurora */
+.aurora{position:fixed;top:-40%;left:-20%;width:140%;height:100%;z-index:0;pointer-events:none;opacity:.5;
+  background:conic-gradient(from 180deg at 50% 50%,rgba(245,166,35,.15),rgba(99,102,241,.1),rgba(245,166,35,.05),transparent);
+  animation:spin 25s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.page{position:relative;z-index:2;max-width:800px;margin:0 auto;padding:0 1.5rem}
 
 /* Hero */
-.hero{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.5rem;padding:4rem 0}
-.hero-badge{background:var(--surface);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:999px;padding:.4rem 1.2rem;font-size:.8rem;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
-.hero h1{font-size:clamp(2.6rem,8vw,4.5rem);font-weight:900;line-height:1;letter-spacing:-.03em}
-.hero h1 .highlight{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero .sub{font-size:clamp(1.1rem,3vw,1.4rem);color:var(--muted);max-width:38ch;line-height:1.6}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.8rem}
+.hero-badge{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:999px;padding:.4rem 1.2rem;font-size:.78rem;color:var(--gold);letter-spacing:1px;text-transform:uppercase;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.hero h1{font-size:clamp(3rem,10vw,5.5rem);font-weight:900;line-height:.95;letter-spacing:-.04em}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--gold),var(--gold2),#fff,var(--gold));background-size:300% 300%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 4s ease-in-out infinite}
+@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.hero .sub{font-size:clamp(1.1rem,3vw,1.5rem);color:var(--muted);max-width:32ch;line-height:1.6}
 .hero .sub strong{color:var(--ink)}
 
-/* CTAs */
-.ctas{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:1rem}
-.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 2rem;border-radius:12px;font-size:1rem;font-weight:700;text-decoration:none;transition:all .2s}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#e8930c);color:#000;box-shadow:0 4px 24px rgba(245,166,35,.3)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(245,166,35,.4)}
-.btn-ghost{background:var(--surface);backdrop-filter:blur(8px);color:var(--ink);border:1px solid var(--border)}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+/* CTAs with glow */
+.ctas{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:.5rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2.4rem;border-radius:14px;font-size:1.05rem;font-weight:700;text-decoration:none;transition:all .25s;position:relative}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#e8930c);color:#000;
+  box-shadow:0 0 30px rgba(245,166,35,.3),0 0 60px rgba(245,166,35,.1)}
+.btn-gold:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 0 50px rgba(245,166,35,.5),0 0 100px rgba(245,166,35,.2)}
+.btn-ghost{background:rgba(255,255,255,.03);backdrop-filter:blur(12px);color:var(--ink);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 20px rgba(245,166,35,.1)}
+
+/* Scroll indicator */
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bob 2s ease-in-out infinite;color:var(--muted);font-size:1.5rem}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
 /* Features */
-.section{padding:5rem 0}
-.section-title{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2.5rem}
-.section-title span{color:var(--gold)}
+.section{padding:6rem 0}
+.section-title{font-size:2rem;font-weight:800;text-align:center;margin-bottom:3rem}
+.section-title span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem}
-.card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;transition:border-color .3s,transform .3s}
-.card:hover{border-color:rgba(245,166,35,.3);transform:translateY(-3px)}
-.card-icon{font-size:2.2rem;margin-bottom:.8rem}
-.card h3{font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
-.card p{font-size:.92rem;color:var(--muted);line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.card{background:rgba(255,255,255,.02);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:18px;padding:2rem;transition:all .35s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(245,166,35,.06),transparent 60%);opacity:0;transition:opacity .4s}
+.card:hover::before{opacity:1}
+.card:hover{border-color:rgba(245,166,35,.25);transform:translateY(-4px)}
+.card-icon{font-size:2.5rem;margin-bottom:1rem}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.card p{font-size:.9rem;color:var(--muted);line-height:1.7}
 
-/* Stats banner */
-.stats{display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;padding:3rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:3rem 0}
+/* Stats */
+.stats{display:flex;flex-wrap:wrap;gap:3rem;justify-content:center;padding:4rem 0}
 .stat{text-align:center}
-.stat .num{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat .label{font-size:.82rem;color:var(--muted);margin-top:.3rem;text-transform:uppercase;letter-spacing:.5px}
+.stat .num{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat .label{font-size:.78rem;color:var(--muted);margin-top:.4rem;text-transform:uppercase;letter-spacing:1px}
 
 /* Final CTA */
-.final-cta{text-align:center;padding:5rem 0 6rem}
-.final-cta h2{font-size:2rem;font-weight:800;margin-bottom:1rem}
-.final-cta p{color:var(--muted);font-size:1.1rem;margin-bottom:2rem;max-width:36ch;margin-left:auto;margin-right:auto}
+.final{text-align:center;padding:6rem 0 8rem}
+.final h2{font-size:2.2rem;font-weight:800;margin-bottom:1rem}
+.final p{color:var(--muted);font-size:1.15rem;margin-bottom:2.5rem;max-width:34ch;margin-left:auto;margin-right:auto;line-height:1.6}
 
 /* Footer */
-footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.78rem;border-top:1px solid var(--border)}
+footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.75rem;border-top:1px solid var(--border)}
 footer a{color:var(--gold);text-decoration:none}
-footer a:hover{text-decoration:underline}
-.socials{display:flex;gap:1.5rem;justify-content:center;margin-bottom:1rem;font-size:1.4rem}
-.socials a{color:var(--muted);text-decoration:none;transition:color .2s}
-.socials a:hover{color:var(--gold)}
+.socials{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem;font-size:1.6rem}
+.socials a{color:var(--muted);text-decoration:none;transition:all .3s}
+.socials a:hover{color:var(--gold);transform:scale(1.2)}
 
 @media(max-width:600px){
-  .hero{min-height:80vh;padding:3rem 0}
+  .hero{min-height:90vh}
   .ctas{flex-direction:column;align-items:stretch}
   .btn{justify-content:center}
-  .stats{gap:1.5rem}
+  .stats{gap:2rem}
 }
 </style>
 <script type="application/ld+json">
@@ -80,65 +98,45 @@ footer a:hover{text-decoration:underline}
 </script>
 </head>
 <body>
-<div class="bg-glow"></div>
-<div class="page">
 
+<canvas id="particles"></canvas>
+<div class="aurora"></div>
+<div class="vignette"></div>
+
+<div class="page">
   <section class="hero">
     <div class="hero-badge">⚽ Liga MX · Apertura 2026</div>
     <h1>El <span class="highlight">Anti-Tipster</span></h1>
     <p class="sub">El único servicio que te dice cuándo <strong>NO</strong> apostar.<br>Récord público. IA real. Cero mentiras.</p>
     <div class="ctas">
-      <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis en Telegram</a>
+      <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis</a>
       <a href="https://www.caliente.mx" class="btn btn-ghost" target="_blank" rel="noopener nofollow">🎰 Caliente</a>
     </div>
+    <div class="scroll-hint">↓</div>
   </section>
 
   <section class="section">
     <h2 class="section-title">¿Por qué somos <span>diferentes</span>?</h2>
     <div class="grid">
-      <div class="card">
-        <div class="card-icon">🤖</div>
-        <h3>IA, no opinión</h3>
-        <p>Modelo de machine learning entrenado con miles de partidos reales. Walk-forward validado.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🛑</div>
-        <h3>Señales de SKIP</h3>
-        <p>Te decimos cuándo no apostar. El mejor dinero es el que no pierdes.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">📊</div>
-        <h3>Récord público</h3>
-        <p>Cada pick con timestamp. Aciertos y fallos visibles. Verificable por ti mismo.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🎟️</div>
-        <h3>Parlays inteligentes</h3>
-        <p>Combinamos piernas de alta confianza: 1X2 + BTTS + O/U. Listos para armar en Caliente.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🚫</div>
-        <h3>Cero "100% seguro"</h3>
-        <p>Los tipsters que prometen ganancias garantizadas te están mintiendo. Nosotros no.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">💸</div>
-        <h3>Gratis para empezar</h3>
-        <p>Únete al canal, verifica nuestro récord, y decide si vale la pena. Sin compromiso.</p>
-      </div>
+      <div class="card"><div class="card-icon">🤖</div><h3>IA, no opinión</h3><p>Machine learning entrenado con miles de partidos. Walk-forward validado.</p></div>
+      <div class="card"><div class="card-icon">🛑</div><h3>Señales de SKIP</h3><p>Te decimos cuándo no apostar. El mejor dinero es el que no pierdes.</p></div>
+      <div class="card"><div class="card-icon">📊</div><h3>Récord público</h3><p>Cada pick con timestamp. Aciertos y fallos. Verificable por ti.</p></div>
+      <div class="card"><div class="card-icon">🎟️</div><h3>Parlays inteligentes</h3><p>Piernas de alta confianza combinadas. Listas para Caliente.</p></div>
+      <div class="card"><div class="card-icon">🚫</div><h3>Cero "100% seguro"</h3><p>Los que prometen eso te mienten. Nosotros no.</p></div>
+      <div class="card"><div class="card-icon">💸</div><h3>Gratis para empezar</h3><p>Únete, verifica nuestro récord, y decide. Sin compromiso.</p></div>
     </div>
   </section>
 
   <div class="stats">
-    <div class="stat"><div class="num">AGO</div><div class="label">Arranca el récord</div></div>
+    <div class="stat"><div class="num">AGO</div><div class="label">Inicia el récord</div></div>
     <div class="stat"><div class="num">3,200+</div><div class="label">Partidos analizados</div></div>
-    <div class="stat"><div class="num">2</div><div class="label">Cerebros de IA</div></div>
-    <div class="stat"><div class="num">$0</div><div class="label">Costo para unirte</div></div>
+    <div class="stat"><div class="num">2</div><div class="label">Cerebros IA</div></div>
+    <div class="stat"><div class="num">$0</div><div class="label">Costo de entrada</div></div>
   </div>
 
-  <section class="final-cta">
+  <section class="final">
     <h2>¿Listo para dejar de perder con tipsters falsos?</h2>
-    <p>Únete ahora. Cuando empiece la temporada, vas a ver cada pick y cada resultado — en vivo, sin editar.</p>
+    <p>Únete ahora. Cuando empiece la temporada vas a ver cada pick en vivo — sin editar, sin borrar.</p>
     <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis en Telegram</a>
   </section>
 
@@ -149,9 +147,63 @@ footer a:hover{text-decoration:underline}
       <a href="https://x.com/elantitipster" title="X">𝕏</a>
     </div>
     <p>El Anti-Tipster · Liga MX · Apuesta responsable · +18</p>
-    <p style="margin-top:.4rem">Algunos links son de afiliados. Solo recomendamos casas que usamos. <a href="https://t.me/elantitipster">Más info</a></p>
+    <p style="margin-top:.4rem">Algunos links son de afiliados. <a href="https://t.me/elantitipster">Más info</a></p>
   </footer>
-
 </div>
+
+<script>
+// Particle system — floating golden orbs with physics
+const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+resize();addEventListener('resize',resize);
+
+class P{
+  constructor(){this.reset()}
+  reset(){
+    this.x=Math.random()*W;this.y=Math.random()*H;
+    this.r=Math.random()*2+.5;
+    this.vx=(Math.random()-.5)*.3;
+    this.vy=(Math.random()-.5)*.3-.1;
+    this.alpha=Math.random()*.4+.1;
+    this.life=Math.random()*400+200;this.age=0;
+  }
+  update(){
+    this.x+=this.vx;this.y+=this.vy;
+    this.vy-=0.0003; // slight upward drift
+    this.age++;
+    if(this.age>this.life||this.x<-50||this.x>W+50||this.y<-50||this.y>H+50)this.reset();
+  }
+  draw(){
+    const fade=1-this.age/this.life;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(245,166,35,${this.alpha*fade})`;
+    ctx.fill();
+    // glow
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r*3,0,Math.PI*2);
+    ctx.fillStyle=`rgba(245,166,35,${this.alpha*fade*.15})`;
+    ctx.fill();
+  }
+}
+for(let i=0;i<80;i++)particles.push(new P());
+
+function animate(){
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(animate);
+}
+animate();
+
+// Card mouse-follow glow
+document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect();
+    c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+</script>
 </body>
 </html>
