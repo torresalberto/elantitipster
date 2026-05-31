@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Anti-Tipster — Pronósticos Liga MX honestos y verificables</title>
+<meta name="description" content="El único servicio de predicciones de Liga MX que te dice cuándo NO apostar. Récord público, IA verificable, sin hype.">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:rgba(255,255,255,.04);--ink:#f0f0f5;--muted:#7a7a8c;--gold:#f5a623;--gold2:#ffd700;--accent-glow:rgba(245,166,35,.12);--border:rgba(255,255,255,.08);--radius:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden}
+
+/* Animated gradient bg */
+.bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(245,166,35,.08),transparent),
+             radial-gradient(ellipse 60% 50% at 80% 100%,rgba(99,102,241,.06),transparent)}
+
+.page{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:0 1.5rem}
+
+/* Hero */
+.hero{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.5rem;padding:4rem 0}
+.hero-badge{background:var(--surface);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:999px;padding:.4rem 1.2rem;font-size:.8rem;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.hero h1{font-size:clamp(2.6rem,8vw,4.5rem);font-weight:900;line-height:1;letter-spacing:-.03em}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .sub{font-size:clamp(1.1rem,3vw,1.4rem);color:var(--muted);max-width:38ch;line-height:1.6}
+.hero .sub strong{color:var(--ink)}
+
+/* CTAs */
+.ctas{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:1rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 2rem;border-radius:12px;font-size:1rem;font-weight:700;text-decoration:none;transition:all .2s}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#e8930c);color:#000;box-shadow:0 4px 24px rgba(245,166,35,.3)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(245,166,35,.4)}
+.btn-ghost{background:var(--surface);backdrop-filter:blur(8px);color:var(--ink);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Features */
+.section{padding:5rem 0}
+.section-title{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2.5rem}
+.section-title span{color:var(--gold)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem}
+.card{background:var(--surface);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;transition:border-color .3s,transform .3s}
+.card:hover{border-color:rgba(245,166,35,.3);transform:translateY(-3px)}
+.card-icon{font-size:2.2rem;margin-bottom:.8rem}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+.card p{font-size:.92rem;color:var(--muted);line-height:1.6}
+
+/* Stats banner */
+.stats{display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;padding:3rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:3rem 0}
+.stat{text-align:center}
+.stat .num{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat .label{font-size:.82rem;color:var(--muted);margin-top:.3rem;text-transform:uppercase;letter-spacing:.5px}
+
+/* Final CTA */
+.final-cta{text-align:center;padding:5rem 0 6rem}
+.final-cta h2{font-size:2rem;font-weight:800;margin-bottom:1rem}
+.final-cta p{color:var(--muted);font-size:1.1rem;margin-bottom:2rem;max-width:36ch;margin-left:auto;margin-right:auto}
+
+/* Footer */
+footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.78rem;border-top:1px solid var(--border)}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.socials{display:flex;gap:1.5rem;justify-content:center;margin-bottom:1rem;font-size:1.4rem}
+.socials a{color:var(--muted);text-decoration:none;transition:color .2s}
+.socials a:hover{color:var(--gold)}
+
+@media(max-width:600px){
+  .hero{min-height:80vh;padding:3rem 0}
+  .ctas{flex-direction:column;align-items:stretch}
+  .btn{justify-content:center}
+  .stats{gap:1.5rem}
+}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"El Anti-Tipster","description":"Pronósticos de Liga MX con IA. Récord público verificable.","url":"https://elantitipster.com","sameAs":["https://t.me/elantitipster","https://tiktok.com/@elantitipster","https://x.com/elantitipster"]}
+</script>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="page">
+
+  <section class="hero">
+    <div class="hero-badge">⚽ Liga MX · Apertura 2026</div>
+    <h1>El <span class="highlight">Anti-Tipster</span></h1>
+    <p class="sub">El único servicio que te dice cuándo <strong>NO</strong> apostar.<br>Récord público. IA real. Cero mentiras.</p>
+    <div class="ctas">
+      <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis en Telegram</a>
+      <a href="https://www.caliente.mx" class="btn btn-ghost" target="_blank" rel="noopener nofollow">🎰 Caliente</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">¿Por qué somos <span>diferentes</span>?</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>IA, no opinión</h3>
+        <p>Modelo de machine learning entrenado con miles de partidos reales. Walk-forward validado.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛑</div>
+        <h3>Señales de SKIP</h3>
+        <p>Te decimos cuándo no apostar. El mejor dinero es el que no pierdes.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Récord público</h3>
+        <p>Cada pick con timestamp. Aciertos y fallos visibles. Verificable por ti mismo.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎟️</div>
+        <h3>Parlays inteligentes</h3>
+        <p>Combinamos piernas de alta confianza: 1X2 + BTTS + O/U. Listos para armar en Caliente.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚫</div>
+        <h3>Cero "100% seguro"</h3>
+        <p>Los tipsters que prometen ganancias garantizadas te están mintiendo. Nosotros no.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💸</div>
+        <h3>Gratis para empezar</h3>
+        <p>Únete al canal, verifica nuestro récord, y decide si vale la pena. Sin compromiso.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="num">AGO</div><div class="label">Arranca el récord</div></div>
+    <div class="stat"><div class="num">3,200+</div><div class="label">Partidos analizados</div></div>
+    <div class="stat"><div class="num">2</div><div class="label">Cerebros de IA</div></div>
+    <div class="stat"><div class="num">$0</div><div class="label">Costo para unirte</div></div>
+  </div>
+
+  <section class="final-cta">
+    <h2>¿Listo para dejar de perder con tipsters falsos?</h2>
+    <p>Únete ahora. Cuando empiece la temporada, vas a ver cada pick y cada resultado — en vivo, sin editar.</p>
+    <a href="https://t.me/elantitipster" class="btn btn-gold" target="_blank" rel="noopener">📲 Únete gratis en Telegram</a>
+  </section>
+
+  <footer>
+    <div class="socials">
+      <a href="https://t.me/elantitipster" title="Telegram">📲</a>
+      <a href="https://tiktok.com/@elantitipster" title="TikTok">🎵</a>
+      <a href="https://x.com/elantitipster" title="X">𝕏</a>
+    </div>
+    <p>El Anti-Tipster · Liga MX · Apuesta responsable · +18</p>
+    <p style="margin-top:.4rem">Algunos links son de afiliados. Solo recomendamos casas que usamos. <a href="https://t.me/elantitipster">Más info</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
