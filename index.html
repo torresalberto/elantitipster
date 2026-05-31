@@ -44,6 +44,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;overfl
 .reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
 .reveal.visible{opacity:1;transform:none}
 
+/* Progress bar */
+.progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));z-index:101;transition:width .6s ease;width:0}
+
 /* Fixed CTA — always visible, pulses brighter */
 .fixed-cta{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:100;
   display:flex;gap:.8rem;padding:.6rem;background:rgba(5,5,8,.85);backdrop-filter:blur(16px);
@@ -82,6 +85,8 @@ footer a{color:var(--gold);text-decoration:none}
 </style>
 </head>
 <body>
+
+<div class="progress" id="progress"></div>
 
 <!-- Fixed CTA — always visible, glow intensifies -->
 <div class="fixed-cta">
@@ -155,26 +160,36 @@ footer a{color:var(--gold);text-decoration:none}
 </footer>
 
 <script>
-// Reveal on scroll (IntersectionObserver)
+// Reveal on scroll
 const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
 },{threshold:.2});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// Auto-advance panels every 6 seconds
+// Progress bar + auto-advance
 const panels=document.querySelectorAll('.panel');
+const bar=document.getElementById('progress');
 let current=0;
+
+function updateBar(){bar.style.width=((current+1)/panels.length*100)+'%'}
+updateBar();
+
 function advance(){
   current=(current+1)%panels.length;
   panels[current].scrollIntoView({behavior:'smooth'});
+  updateBar();
 }
 let timer=setInterval(advance,6000);
-// Pause auto on user scroll, resume after 10s idle
+
+// Pause on user scroll, resume after 10s idle
 let idle;
 window.addEventListener('scroll',()=>{
   clearInterval(timer);clearTimeout(idle);
-  // figure out which panel is visible
-  panels.forEach((p,i)=>{if(p.getBoundingClientRect().top<innerHeight/2&&p.getBoundingClientRect().bottom>innerHeight/2)current=i});
+  panels.forEach((p,i)=>{
+    const r=p.getBoundingClientRect();
+    if(r.top<innerHeight/2&&r.bottom>innerHeight/2)current=i;
+  });
+  updateBar();
   idle=setTimeout(()=>{timer=setInterval(advance,6000)},10000);
 },{passive:true});
 </script>
